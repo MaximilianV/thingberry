@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 import re
-import json
-from pathlib import Path
-
-
+from thing import Thing
+import utils
 """
 This script handles the THING setup.
 """
-
-SETTINGS_FILE = "settings.json"
 
 
 def request_thing_name():
@@ -24,56 +20,41 @@ def request_thing_name():
     return raw_name
 
 
-def get_thing_id(settings):
-    """
-    Build the thing id out of the set namespace and chosen name.
-    :param settings: the settings dictionary of the thingberry
-    :type settings: dict
-    :return: a string containing the thing id
-    :rtype: basestring
-    """
-    return settings["namespace"] + ":" + settings["id"]
+def request_should_import_existing_settings():
+    return utils.ask_yes_no_question("Do you want to import it?")
 
 
-def write_settings(settings):
-    """
-    Saves the settings dictionary to disk.
-    :param settings: the settings dictionary
-    :type settings: dict
-    """
-    with open(SETTINGS_FILE, 'w') as fp:
-        json.dump(settings, fp)
+def request_should_save_settings():
+    return utils.ask_yes_no_question("Do you want to save your current settings?")
 
 
-def load_settings():
-    """
-    Loads settings dictionary from disk.
-    :return: the loaded settings dictionary
-    :rtype: dict
-    """
-    with open(SETTINGS_FILE, 'o') as fp:
-        return json.load(fp)
-
-
-def do_settings_exist():
-    """
-    Checks whether there already is a settings file for thingberry.
-    :return: whether a settings file exist
-    :rtype: boolean
-    """
-    if Path(SETTINGS_FILE).is_file():
-        return True
-    else:
-        return False
+def setup_new_thing(thing):
+    print("The following steps will guide you through the setup of your new raspberry thing.")
+    thing.name = request_thing_name()
+    print("Your things id is \"" + thing.get_id() + "\".")
 
 
 def main():
-    settings = dict()
+    thing = Thing()
     print("Welcome to thingberry.")
-    print("The following steps will guide you through the setup of your new raspberry thing.")
-    settings["id"] = request_thing_name()
-    settings["namespace"] = "thingberry"
-    print("Your things id is \"" + get_thing_id(settings) + "\".")
+    if thing.do_settings_exist():
+        print("An existing settings file was found.")
+        if request_should_import_existing_settings():
+            thing.load_settings()
+            print("Successfully loaded settings for thing " + thing.name)
+        else:
+            print("Please keep in mind, that your existing settings will be overwritten.")
+            setup_new_thing(thing)
+    else:
+        setup_new_thing(thing)
+
+    print("You finished the setup.")
+
+    if request_should_save_settings():
+        thing.write_settings()
+        print("Wrote settings to disk.")
+
+    print("Bye.")
 
 
 if __name__ == "__main__":
