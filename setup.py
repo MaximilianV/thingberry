@@ -28,6 +28,10 @@ def request_should_save_settings():
     return utils.ask_yes_no_question("Do you want to save your current settings?")
 
 
+def request_should_send_to_bosch():
+    return utils.ask_yes_no_question("Should the thing be send to the Bosch cloud?")
+
+
 def setup_new_thing(thing):
     print("The following steps will guide you through the setup of your new raspberry thing.")
     thing.name = request_thing_name()
@@ -53,6 +57,10 @@ def main():
     if request_should_save_settings():
         thing.write_settings()
         print("Wrote settings to disk.")
+
+    if request_should_send_to_bosch():
+        thing.create()
+        print("Sent thing in the clouds!")
 
     print("Bye.")
 

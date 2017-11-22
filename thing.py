@@ -1,17 +1,19 @@
 import re
 import json
 from pathlib import Path
+from thingconnector.thingconnector import ThingConnector
 
 
 class Thing:
     """This class represents the thing.
     It handles settings and can start synchronization to the thing cloud.
     """
-    SETTINGS_FILE = "settings.json"
+    SETTINGS_FILE = "thing-settings.json"
 
     def __init__(self):
         self.settings = dict()
         self.settings["namespace"] = "thingberry"
+        self.thingconnector = ThingConnector()
         print("A new thing!")
 
     @property
@@ -49,6 +51,9 @@ class Thing:
         """
         with open(self.SETTINGS_FILE, 'r') as fp:
             self.settings = json.load(fp)
+
+    def create(self):
+        self.thingconnector.create_thing(self.get_id())
 
     @staticmethod
     def do_settings_exist():
