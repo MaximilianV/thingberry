@@ -50,10 +50,10 @@ class Thing:
             self.add_attribute(artifact_name)
 
     def add_feature(self, feature_name):
-        self.features.update({feature_name: {}})
+        self.features.update({feature_name: {'properties': {}}})
 
     def add_property(self, property_name, feature_name):
-        self.features[feature_name][property_name] = {}
+        self.features[feature_name]["properties"][property_name] = {}
 
     def add_attribute(self, attribute_name):
         self.attributes.update({attribute_name: {}})
@@ -81,7 +81,7 @@ class Thing:
             self.settings = json.load(fp)
 
     def create(self):
-        print(self.thingconnector.create_thing(self.get_id()))
+        print(self.thingconnector.create_thing(self))
 
     @staticmethod
     def do_settings_exist():

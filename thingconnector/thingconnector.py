@@ -14,9 +14,15 @@ class ThingConnector:
         self.session.headers.update({'x-cr-api-token': settings.api_token,
                                      'Content-Type': 'application/json'})
 
-    def create_thing(self, thing_id):
-        uri = THINGS_URI.format(thingId=thing_id)
-        data = {'attributes': {'type': 'thingberry'}}
+    def create_thing(self, thing):
+        uri = THINGS_URI.format(thingId=thing.get_id())
+        data = {'thingId': thing.get_id(),
+                'policyId': thing.get_id(),
+                'attributes': thing.attributes,
+                'features': thing.features}
+        # for feature in thing.features:
+        #    data.update({feature, thing.get_properties(feature)})
+        # return data
         return ThingConnector.get_response_message(self.put(uri, data), "thing")
 
     def put(self, uri, data):
@@ -33,4 +39,4 @@ class ThingConnector:
             return "Successfully created the " + artifact_name
         if request.status_code == requests.codes.no_content:
             return "Updated or deleted the " + artifact_name
-        return request.reason
+        return request.reason + "\n" + request.text
