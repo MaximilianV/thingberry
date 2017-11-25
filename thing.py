@@ -2,6 +2,7 @@ import re
 import json
 from pathlib import Path
 from thingconnector.thingconnector import ThingConnector
+from utils import ThingArtifact
 
 
 class Thing:
@@ -13,6 +14,8 @@ class Thing:
     def __init__(self):
         self.settings = dict()
         self.settings["namespace"] = "thingberry"
+        self.settings["features"] = {}
+        self.settings["attributes"] = {}
         self.thingconnector = ThingConnector()
         print("A new thing!")
 
@@ -29,6 +32,31 @@ class Thing:
     @property
     def namespace(self):
         return self.settings["namespace"]
+
+    @property
+    def features(self):
+        return self.settings["features"]
+
+    @property
+    def attributes(self):
+        return self.settings["attributes"]
+
+    def add_artifact(self, artifact, artifact_name, parent_artifact_name=None):
+        if artifact == ThingArtifact.Feature:
+            self.add_feature(artifact_name)
+        if artifact == ThingArtifact.Property:
+            self.add_property(artifact_name, parent_artifact_name)
+        if artifact == ThingArtifact.Attribute:
+            self.add_attribute(artifact_name)
+
+    def add_feature(self, feature_name):
+        self.features.update({feature_name: {}})
+
+    def add_property(self, property_name, feature_name):
+        self.features[feature_name][property_name] = {}
+
+    def add_attribute(self, attribute_name):
+        self.attributes.update({attribute_name: {}})
 
     def get_id(self):
         """
@@ -53,7 +81,7 @@ class Thing:
             self.settings = json.load(fp)
 
     def create(self):
-        self.thingconnector.create_thing(self.get_id())
+        print(self.thingconnector.create_thing(self.get_id()))
 
     @staticmethod
     def do_settings_exist():

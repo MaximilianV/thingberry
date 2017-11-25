@@ -1,10 +1,13 @@
 #!/usr/bin/env python
-import re
 from thing import Thing
 import utils
+from utils import ThingArtifact
 """
 This script handles the THING setup.
 """
+
+THING_NAME_REGEX = "^[a-zA-Z0-9_\-\.\!\~\*\'\(\)]*$"
+FEATURE_PROPERTY_REGEX = "^[_a-zA-Z][_a-zA-Z0-9\-]*$"
 
 
 def request_thing_name():
@@ -15,9 +18,50 @@ def request_thing_name():
     :rtype: basestring
     """
     raw_name = input("Please choose a name for your new thing:\n")
-    while not re.match("^[a-zA-Z0-9_\-\.\!\~\*\'\(\)]*$", raw_name):
-        raw_name = input("Please input a valid uri string as name:\n")
-    return raw_name
+    return utils.input_require_match_reqex(THING_NAME_REGEX, raw_name)
+
+
+def setup_artifacts(thing, artifact, parent_artifact=None):
+    """
+    This method allows to setup attributes, features and properties, depending on the provided artifact type.
+    For the feature artifact, sub-properties can be created too.
+    :param thing: the affected thing
+    :type thing: Thing
+    :param artifact: the artifact type that should be added
+    :type artifact: ThingArtifact
+    :param parent_artifact: default "none", name of parent feature if properties are created
+    :type parent_artifact: basestring
+    :return: None
+    :rtype: None
+    """
+    print("In the following, you can configure the " + artifact.name + " of your thing.\n")
+    if artifact == ThingArtifact.Feature:
+        print("\"A Feature is used to manage all data and functionality of a Thing" +
+              "that can be clustered in an outlined technical context.\"\n")
+    add_artifact = True
+    while add_artifact:
+        setup_artifact(thing, artifact, parent_artifact)
+        add_artifact = utils.ask_yes_no_question("Add another " + artifact.name + "?")
+
+
+def setup_artifact(thing, artifact, parent_artifact=None):
+    """
+    Requests a name for the new artifact to be created and in case it is a new feature, sub-properties will be
+    configurable too.
+    :param thing: the affected thing
+    :type thing: Thing
+    :param artifact: the artifact type that should be added
+    :type artifact: ThingArtifact
+    :param parent_artifact: default "none", name of parent feature if properties are created
+    :type parent_artifact: basestring
+    :return: None
+    :rtype: None
+    """
+    name = input("Please name the new " + artifact.name + ":\n")
+    name = utils.input_require_match_reqex(FEATURE_PROPERTY_REGEX, name)
+    thing.add_artifact(artifact, name, parent_artifact)
+    if artifact == ThingArtifact.Feature:
+        setup_artifacts(thing, ThingArtifact.Property, name)
 
 
 def request_should_import_existing_settings():
@@ -36,6 +80,7 @@ def setup_new_thing(thing):
     print("The following steps will guide you through the setup of your new raspberry thing.")
     thing.name = request_thing_name()
     print("Your things id is \"" + thing.get_id() + "\".")
+    setup_artifacts(thing, ThingArtifact.Feature)
 
 
 def main():
@@ -52,6 +97,7 @@ def main():
     else:
         setup_new_thing(thing)
 
+    print(thing.features)
     print("You finished the setup.")
 
     if request_should_save_settings():
