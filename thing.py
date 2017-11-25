@@ -38,6 +38,13 @@ class Thing:
         return self.settings["features"]
 
     @property
+    def properties(self):
+        properties = {}
+        for feature in self.features:
+            properties.update(self.features[feature]["properties"])
+        return properties
+
+    @property
     def attributes(self):
         return self.settings["attributes"]
 
