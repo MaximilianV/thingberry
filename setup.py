@@ -60,7 +60,7 @@ def main():
 
     if request_should_send_to_bosch():
         thing.create()
-        print("Sent thing in the clouds!")
+        print("Sent thing to the clouds!")
 
     print("Bye.")
 

@@ -1,6 +1,6 @@
-#Basic Auth User
+# Basic Auth User
 username = ""
 password = ""
 
-#Application
+# Application
 api_token = ""
