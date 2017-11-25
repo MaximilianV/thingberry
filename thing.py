@@ -58,6 +58,14 @@ class Thing:
     def add_attribute(self, attribute_name):
         self.attributes.update({attribute_name: {}})
 
+    def get_features_without_values(self):
+        features = {}
+        for feature in self.features:
+            features.update({feature: {"properties": {}}})
+            for f_property in self.features[feature]["properties"]:
+                features[feature]["properties"].update({f_property: {}})
+        return features
+
     def get_id(self):
         """
         Build the thing id out of the set namespace and chosen name.

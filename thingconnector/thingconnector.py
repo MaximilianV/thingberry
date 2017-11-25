@@ -19,10 +19,7 @@ class ThingConnector:
         data = {'thingId': thing.get_id(),
                 'policyId': thing.get_id(),
                 'attributes': thing.attributes,
-                'features': thing.features}
-        # for feature in thing.features:
-        #    data.update({feature, thing.get_properties(feature)})
-        # return data
+                'features': thing.get_features_without_values()}
         return ThingConnector.get_response_message(self.put(uri, data), "thing")
 
     def put(self, uri, data):
