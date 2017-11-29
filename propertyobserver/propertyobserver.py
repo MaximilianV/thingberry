@@ -14,6 +14,9 @@ class PropertyObserver(threading.Thread):
     # def observe(self):
     #   return
 
+    def run(self):
+        pass
+
     def notify(self, value):
         self.runner.notify(self.feature_property, value)
 
@@ -25,19 +28,23 @@ class PropertyObserver(threading.Thread):
         return self.stop_event.is_set()
 
 
-def file_observer(file_path):
-    print("file_observer!")
-    with open(file_path, 'r') as fp:
-        return json.load(fp)
+class FileObserver:
+    @staticmethod
+    def execute(self, file_path):
+        print("file_observer!")
+        with open(file_path, 'r') as fp:
+            return json.load(fp)
 
 
-def fun_observer(test):
-    print("HAHAHAHA")
-    print(test)
-    return test
+class FunObserver:
+    @staticmethod
+    def execute(self, test):
+        print("HAHAHAHA")
+        print(test)
+        return test
 
 
 class Observer(Enum):
-    FILE = file_observer
-    FUN = fun_observer
+    FILE = FileObserver
+    FUN = FunObserver
 

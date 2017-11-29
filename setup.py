@@ -2,6 +2,9 @@
 from thing import Thing
 import utils
 from utils import ThingArtifact
+from propertyobserver.propertyobserverfactory import ObserverStyle
+from propertyobserver.propertyobserver import Observer
+
 """
 This script handles the THING setup.
 """
@@ -62,6 +65,16 @@ def setup_artifact(thing, artifact, parent_artifact=None):
     thing.add_artifact(artifact, name, parent_artifact)
     if artifact == ThingArtifact.Feature:
         setup_artifacts(thing, ThingArtifact.Property, name)
+    if artifact == ThingArtifact.Property:
+        setup_property_observer(thing, name, parent_artifact)
+
+
+def setup_property_observer(thing, property_name, feature_name):
+    print("Please define how values for " + property_name + " should be obtained.")
+    observer = utils.ask_choose_from_enum(Observer)
+    print("Please select when values should be updated.")
+    observer_style = utils.ask_choose_from_enum(ObserverStyle)
+    thing.set_property_observer(observer_style, observer, property_name, feature_name)
 
 
 def request_should_import_existing_settings():

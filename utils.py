@@ -10,6 +10,17 @@ def ask_yes_no_question(question):
     return False
 
 
+def ask_choose_from_enum(enum):
+    i = 0
+    entries = []
+    for entry in enum:
+        entries.append(entry.name)
+        i += 1
+        print(str(i) + "\t" + entry.name)
+    entry_nr = int(input("Please select an entry:"))
+    return enum[entries[entry_nr-1]]
+
+
 def input_require_match_reqex(regex, raw_input):
     while not re.match(regex, raw_input):
         raw_input = input("Please input a valid string as name (should match \"" + regex + "\"):\n")

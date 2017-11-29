@@ -62,6 +62,9 @@ class Thing:
     def add_property(self, property_name, feature_name):
         self.features[feature_name]["properties"][property_name] = {}
 
+    def set_property_observer(self, observer_style, observer, property_name, feature_name):
+        self.features[feature_name]["properties"][property_name]["observer"] = {"style" : observer_style.name, "type" : observer.name}
+
     def add_attribute(self, attribute_name):
         self.attributes.update({attribute_name: {}})
 
