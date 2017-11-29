@@ -3,6 +3,9 @@ import json
 from pathlib import Path
 from thingconnector.thingconnector import ThingConnector
 from utils import ThingArtifact
+from propertyobserver.propertyobserver import Observer
+from propertyobserver.propertyobserverfactory import ObserverStyle
+from propertyobserver.propertyobserverfactory import PropertyObserverFactory
 
 
 class Thing:
@@ -64,6 +67,12 @@ class Thing:
 
     def set_property_observer(self, observer_style, observer, property_name, feature_name):
         self.features[feature_name]["properties"][property_name]["observer"] = {"style" : observer_style.name, "type" : observer.name}
+
+    def get_property_observer(self, property_name, feature_name):
+        return PropertyObserverFactory.create_observer(
+            ObserverStyle[self.features[feature_name]["properties"][property_name]["observer"]["style"]],
+            Observer[self.features[feature_name]["properties"][property_name]["observer"]["type"]],
+            (feature_name, property_name), {"interval": 3000})
 
     def add_attribute(self, attribute_name):
         self.attributes.update({attribute_name: {}})

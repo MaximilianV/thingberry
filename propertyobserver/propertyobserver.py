@@ -6,13 +6,17 @@ from enum import Enum
 class PropertyObserver(threading.Thread):
     def __init__(self, feature_property, observer, runner=None):
         self.feature_property = feature_property
-        self.runner = runner
-        self.observe = observer
+        self.observe = observer.value.execute
         self.stop_event = threading.Event()
         super(PropertyObserver, self).__init__()
 
-    # def observe(self):
-    #   return
+    @property
+    def runner(self):
+        return self._runner
+
+    @runner.setter
+    def runner(self, name):
+        self._runner = name
 
     def run(self):
         pass
@@ -30,7 +34,7 @@ class PropertyObserver(threading.Thread):
 
 class FileObserver:
     @staticmethod
-    def execute(self, file_path):
+    def execute(file_path):
         print("file_observer!")
         with open(file_path, 'r') as fp:
             return json.load(fp)
@@ -38,7 +42,7 @@ class FileObserver:
 
 class FunObserver:
     @staticmethod
-    def execute(self, test):
+    def execute(test):
         print("HAHAHAHA")
         print(test)
         return test
