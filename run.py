@@ -1,8 +1,5 @@
-from propertyobserver.file_intervalobserver import FileIntervalObserver
-from propertyobserver.intervalobserver import IntervalObserver
 from threading import Timer
 from thing import Thing
-from propertyobserver.propertyobserver import Observer
 
 
 class Run:
