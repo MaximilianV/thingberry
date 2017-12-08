@@ -63,16 +63,26 @@ class Thing:
         self.features.update({feature_name: {'properties': {}}})
 
     def add_property(self, property_name, feature_name):
-        self.features[feature_name]["properties"][property_name] = {}
+        self.features[feature_name]["properties"][property_name] = {"observer": {}, "value": ""}
+
+    def update_property(self, feature_name, property_name, value):
+        if value == self.get_current_property_value(feature_name, property_name):
+            return
+        self.features[feature_name]["properties"][property_name]["value"] = str(value)
+        self.thingconnector.update_property(self.get_id(), feature_name, property_name, value)
 
     def set_property_observer(self, observer_style, observer, property_name, feature_name):
-        self.features[feature_name]["properties"][property_name]["observer"] = {"style" : observer_style.name, "type" : observer.name}
+        self.features[feature_name]["properties"][property_name]["observer"] = {"style": observer_style.name,
+                                                                                "type": observer.name}
 
     def get_property_observer(self, property_name, feature_name):
         return PropertyObserverFactory.create_observer(
             ObserverStyle[self.features[feature_name]["properties"][property_name]["observer"]["style"]],
             Observer[self.features[feature_name]["properties"][property_name]["observer"]["type"]],
             (feature_name, property_name), {"interval": 3000})
+
+    def get_current_property_value(self, feature_name, property_name):
+        return self.features[feature_name]["properties"][property_name]["value"]
 
     def add_attribute(self, attribute_name):
         self.attributes.update({attribute_name: {}})

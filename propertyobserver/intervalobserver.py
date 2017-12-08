@@ -10,7 +10,7 @@ class IntervalObserver(PropertyObserver):
     def run(self):
         running = True
         while running:
-            self.notify(self.observe("wtf"))
+            self.notify(self.observe("test.json"))
             sleep(self.interval / 1000)
             if self.stopped():
                 print("stop")

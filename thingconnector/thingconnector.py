@@ -2,8 +2,10 @@ import settings
 import requests
 import json
 
-BASE_URL = "https://things.apps.bosch-iot-cloud.com/api/2/"
-THINGS_URI = "things/{thingId}"
+BASE_URL = "https://things.apps.bosch-iot-cloud.com/api/2"
+THINGS_URI = "/things/{thingId}"
+FEATURES_URI = "/features/{featureName}"
+PROPERTIES_URI = "/properties/{propertiesName}"
 
 
 class ThingConnector:
@@ -20,6 +22,13 @@ class ThingConnector:
                 'policyId': thing.get_id(),
                 'attributes': thing.attributes,
                 'features': thing.get_features_without_values()}
+        return ThingConnector.get_response_message(self.put(uri, data), "thing")
+
+    def update_property(self, thing_id, feature_name, property_name, value):
+        uri = THINGS_URI.format(thingId=thing_id)\
+              + FEATURES_URI.format(featureName=feature_name)\
+              + PROPERTIES_URI.format(propertyName=property_name)
+        data = str(value)
         return ThingConnector.get_response_message(self.put(uri, data), "thing")
 
     def put(self, uri, data):

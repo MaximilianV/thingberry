@@ -21,4 +21,12 @@ class Run:
                 t.start()
 
     def notify(self, feature_property, value):
+        self.thing.update_property(feature_property[0], feature_property[1], value)
         print(feature_property[0] + "/" + feature_property[1] + ":" + str(value))
+
+    def save_thing(self):
+        self.thing.write_settings()
+
+
+test = Run()
+test.save_thing()
