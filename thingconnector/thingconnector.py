@@ -5,7 +5,7 @@ import json
 BASE_URL = "https://things.apps.bosch-iot-cloud.com/api/2"
 THINGS_URI = "/things/{thingId}"
 FEATURES_URI = "/features/{featureName}"
-PROPERTIES_URI = "/properties/{propertiesName}"
+PROPERTIES_URI = "/properties/{propertyName}"
 
 
 class ThingConnector:
