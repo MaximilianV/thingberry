@@ -71,15 +71,18 @@ class Thing:
         self.features[feature_name]["properties"][property_name]["value"] = str(value)
         self.thingconnector.update_property(self.get_id(), feature_name, property_name, value)
 
-    def set_property_observer(self, observer_style, observer, property_name, feature_name):
+    def set_property_observer(self, observer_style, observer, observer_config, property_name, feature_name):
         self.features[feature_name]["properties"][property_name]["observer"] = {"style": observer_style.name,
-                                                                                "type": observer.name}
+                                                                                "type": observer.name,
+                                                                                "config": observer_config}
 
     def get_property_observer(self, property_name, feature_name):
+        observer_config = self.features[feature_name]["properties"][property_name]["observer"]
         return PropertyObserverFactory.create_observer(
-            ObserverStyle[self.features[feature_name]["properties"][property_name]["observer"]["style"]],
-            Observer[self.features[feature_name]["properties"][property_name]["observer"]["type"]],
-            (feature_name, property_name), {"interval": 3000})
+            ObserverStyle[observer_config["style"]],
+            Observer[observer_config["type"]],
+            observer_config["config"],
+            (feature_name, property_name))
 
     def get_current_property_value(self, feature_name, property_name):
         return self.features[feature_name]["properties"][property_name]["value"]

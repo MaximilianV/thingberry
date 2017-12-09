@@ -5,9 +5,9 @@ from propertyobserver.intervalobserver import IntervalObserver
 class PropertyObserverFactory:
 
     @staticmethod
-    def create_observer(observer_style, observer, feature_property, config):
+    def create_observer(observer_style, observer, config, feature_property):
         if observer_style == ObserverStyle.INTERVAL:
-            observer = IntervalObserver(interval=config["interval"], observer=observer, feature_property=feature_property)
+            observer = IntervalObserver(interval=5000, observer=observer, feature_property=feature_property, config=config)
         return observer
 
 

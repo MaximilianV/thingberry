@@ -74,7 +74,10 @@ def setup_property_observer(thing, property_name, feature_name):
     observer = utils.ask_choose_from_enum(Observer)
     print("Please select when values should be updated.")
     observer_style = utils.ask_choose_from_enum(ObserverStyle)
-    thing.set_property_observer(observer_style, observer, property_name, feature_name)
+    observer_config = {}
+    observer_input_config = input("Please provide the configuration for the " + observer.value.CONFIG_SPEAKING_NAME + " observer:\n")
+    observer_config[observer.value.CONFIG_NAME] = observer_input_config
+    thing.set_property_observer(observer_style, observer, observer_config, property_name, feature_name)
 
 
 def request_should_import_existing_settings():
