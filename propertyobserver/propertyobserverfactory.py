@@ -8,7 +8,10 @@ class PropertyObserverFactory:
     @staticmethod
     def create_observer(observer_style, observer, config, feature_property):
         if observer_style == ObserverStyle.INTERVAL:
-            observer = IntervalObserver(interval=5000, observer=observer, feature_property=feature_property, config=config)
+            observer = IntervalObserver(interval=5000, observer=observer, feature_property=feature_property,
+                                        config=config)
+        if observer_style == ObserverStyle.PERMANENT:
+            observer = IntervalObserver(observer=observer, feature_property=feature_property, config=config)
         return observer
 
 
