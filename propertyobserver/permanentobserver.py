@@ -1,5 +1,4 @@
 from .propertyobserver import PropertyObserver
-from time import sleep
 
 
 class PermanentObserver(PropertyObserver):
