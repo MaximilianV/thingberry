@@ -58,6 +58,7 @@ class PinObserver:
 
     @staticmethod
     def setup(config):
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(config[PinObserver.CONFIG_NAME], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
