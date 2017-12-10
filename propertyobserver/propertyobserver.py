@@ -7,6 +7,8 @@ class PropertyObserver(threading.Thread):
     def __init__(self, feature_property, observer, config, runner=None):
         self.feature_property = feature_property
         self.observe = observer.value.execute
+        if observer == Observer.PIN:
+            observer.value.setup(config)
         self.config = config
         self.stop_event = threading.Event()
         super(PropertyObserver, self).__init__()
@@ -53,6 +55,10 @@ class PinObserver:
         if channel is not None:
             print('Edge detected on channel', channel)
             return "true"
+
+    @staticmethod
+    def setup(config):
+        GPIO.setup(config[PinObserver.CONFIG_NAME], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 class Observer(Enum):
