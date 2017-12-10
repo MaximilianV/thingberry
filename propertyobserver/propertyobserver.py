@@ -8,7 +8,7 @@ class PropertyObserver(threading.Thread):
     def __init__(self, feature_property, observer, config, runner=None):
         self.feature_property = feature_property
         self.observe = observer.value.execute
-        if observer == Observer.PIN:
+        if observer == Observer.BUTTON:
             observer.value.setup(config)
         self.config = config
         self.stop_event = threading.Event()

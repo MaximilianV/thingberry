@@ -63,10 +63,10 @@ class Thing:
         self.features.update({feature_name: {'properties': {}}})
 
     def add_property(self, property_name, feature_name):
-        self.features[feature_name]["properties"][property_name] = {"observer": {}, "value": ""}
+        self.features[feature_name]["properties"][property_name] = {"observer": {}, "value": "0"}
 
     def update_property(self, feature_name, property_name, value):
-        if isinstance(value, str):
+        if not isinstance(value, bool):
             if str(value) == str(self.get_current_property_value(feature_name, property_name)):
                 return
             print("THING: Update value for \"" + feature_name + "/" + property_name + "\" to " + str(value) + ".")
