@@ -1,5 +1,6 @@
 from enum import Enum
 from propertyobserver.intervalobserver import IntervalObserver
+from propertyobserver.permanentobserver import PermanentObserver
 
 
 class PropertyObserverFactory:
@@ -13,3 +14,4 @@ class PropertyObserverFactory:
 
 class ObserverStyle(Enum):
     INTERVAL = IntervalObserver
+    PERMANENT = PermanentObserver
