@@ -52,17 +52,15 @@ class ButtonObserver:
 
     @staticmethod
     def execute(config):
-        channel = GPIO.wait_for_edge(int(config[ButtonObserver.CONFIG_NAME]), GPIO.RISING, timeout=5000)
-        if channel is not None:
-            print('Button press detected on channel', channel)
+        if GPIO.event_detected(int(config[ButtonObserver.CONFIG_NAME])):
             return True
-        else:
-            return False
+        return False
 
     @staticmethod
     def setup(config):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(int(config[ButtonObserver.CONFIG_NAME]), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.add_event_detect(int(config[ButtonObserver.CONFIG_NAME]), GPIO.RISING)
 
 
 class Observer(Enum):
