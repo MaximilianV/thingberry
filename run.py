@@ -3,7 +3,7 @@ from thing import Thing
 
 
 class Run:
-    def __init__(self, run_time=30):
+    def __init__(self, run_time=60):
         self.run_time = run_time
         self.thing = Thing()
         self.thing.load_settings()
@@ -22,7 +22,7 @@ class Run:
 
     def notify(self, feature_property, value):
         self.thing.update_property(feature_property[0], feature_property[1], value)
-        print(feature_property[0] + "/" + feature_property[1] + ":" + str(value))
+        # print(feature_property[0] + "/" + feature_property[1] + ":" + str(value))
 
     def save_thing(self):
         self.thing.write_settings()

@@ -75,6 +75,7 @@ class Thing:
         else:
             if value:
                 current_count = int(self.features[feature_name]["properties"][property_name]["value"]) + 1
+                print("THING: Update value for \"" + feature_name + "/" + property_name + "\" to " + str(current_count) + ".")
                 self.features[feature_name]["properties"][property_name]["value"] = str(current_count)
                 self.thingconnector.update_property(self.get_id(), feature_name, property_name, str(current_count))
 
