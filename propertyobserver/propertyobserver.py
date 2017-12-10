@@ -46,24 +46,26 @@ class FileObserver:
             return json.load(fp)
 
 
-class PinObserver:
+class ButtonObserver:
     CONFIG_NAME = "pin"
     CONFIG_SPEAKING_NAME = "input pin"
 
     @staticmethod
     def execute(config):
-        channel = GPIO.wait_for_edge(int(config[PinObserver.CONFIG_NAME]), GPIO.RISING, timeout=5000)
+        channel = GPIO.wait_for_edge(int(config[ButtonObserver.CONFIG_NAME]), GPIO.RISING, timeout=5000)
         if channel is not None:
-            print('Edge detected on channel', channel)
-            return "true"
+            print('Button press detected on channel', channel)
+            return True
+        else:
+            return False
 
     @staticmethod
     def setup(config):
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(int(config[PinObserver.CONFIG_NAME]), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(int(config[ButtonObserver.CONFIG_NAME]), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 class Observer(Enum):
     FILE = FileObserver
-    PIN = PinObserver
+    BUTTON = ButtonObserver
 
