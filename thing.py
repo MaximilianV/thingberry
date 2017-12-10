@@ -68,6 +68,7 @@ class Thing:
     def update_property(self, feature_name, property_name, value):
         if value == self.get_current_property_value(feature_name, property_name):
             return
+        print("send update to cloud")
         self.features[feature_name]["properties"][property_name]["value"] = str(value)
         self.thingconnector.update_property(self.get_id(), feature_name, property_name, value)
 
