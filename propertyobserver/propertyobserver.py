@@ -1,6 +1,7 @@
 import threading
 import json
 from enum import Enum
+import RPi.GPIO as GPIO
 
 
 class PropertyObserver(threading.Thread):
@@ -51,7 +52,7 @@ class PinObserver:
 
     @staticmethod
     def execute(config):
-        channel = GPIO.wait_for_edge(config[PinObserver.CONFIG_NAME], GPIO_RISING, timeout=5000)
+        channel = GPIO.wait_for_edge(int(config[PinObserver.CONFIG_NAME]), GPIO.RISING, timeout=5000)
         if channel is not None:
             print('Edge detected on channel', channel)
             return "true"
@@ -59,7 +60,7 @@ class PinObserver:
     @staticmethod
     def setup(config):
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(config[PinObserver.CONFIG_NAME], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(int(config[PinObserver.CONFIG_NAME]), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 class Observer(Enum):
