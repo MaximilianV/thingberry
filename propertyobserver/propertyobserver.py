@@ -39,7 +39,6 @@ class FileObserver:
 
     @staticmethod
     def execute(config):
-        print("file_observer!")
         with open(config[FileObserver.CONFIG_NAME], 'r') as fp:
             return json.load(fp)
 
@@ -50,7 +49,6 @@ class PinObserver:
 
     @staticmethod
     def execute(config):
-        print("pin_observer!")
         channel = GPIO.wait_for_edge(config[PinObserver.CONFIG_NAME], GPIO_RISING, timeout=5000)
         if channel is not None:
             print('Edge detected on channel', channel)
