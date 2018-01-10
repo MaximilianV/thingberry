@@ -3,6 +3,9 @@ import json
 from pathlib import Path
 from thingconnector.thingconnector import ThingConnector
 from utils import ThingArtifact
+from propertyobserver.propertyobserver import Observer
+from propertyobserver.propertyobserverfactory import ObserverStyle
+from propertyobserver.propertyobserverfactory import PropertyObserverFactory
 
 
 class Thing:
@@ -38,6 +41,13 @@ class Thing:
         return self.settings["features"]
 
     @property
+    def properties(self):
+        properties = {}
+        for feature in self.features:
+            properties.update(self.features[feature]["properties"])
+        return properties
+
+    @property
     def attributes(self):
         return self.settings["attributes"]
 
@@ -53,7 +63,37 @@ class Thing:
         self.features.update({feature_name: {'properties': {}}})
 
     def add_property(self, property_name, feature_name):
-        self.features[feature_name]["properties"][property_name] = {}
+        self.features[feature_name]["properties"][property_name] = {"observer": {}, "value": "0"}
+
+    def update_property(self, feature_name, property_name, value):
+        if not isinstance(value, bool):
+            if str(value) == str(self.get_current_property_value(feature_name, property_name)):
+                return
+            print("THING: Update value for \"" + feature_name + "/" + property_name + "\" to " + str(value) + ".")
+            self.features[feature_name]["properties"][property_name]["value"] = str(value)
+            self.thingconnector.update_property(self.get_id(), feature_name, property_name, value)
+        else:
+            if value:
+                current_count = int(self.features[feature_name]["properties"][property_name]["value"]) + 1
+                print("THING: Update value for \"" + feature_name + "/" + property_name + "\" to " + str(current_count) + ".")
+                self.features[feature_name]["properties"][property_name]["value"] = str(current_count)
+                self.thingconnector.update_property(self.get_id(), feature_name, property_name, str(current_count))
+
+    def set_property_observer(self, observer_style, observer, observer_config, property_name, feature_name):
+        self.features[feature_name]["properties"][property_name]["observer"] = {"style": observer_style.name,
+                                                                                "type": observer.name,
+                                                                                "config": observer_config}
+
+    def get_property_observer(self, property_name, feature_name):
+        observer_config = self.features[feature_name]["properties"][property_name]["observer"]
+        return PropertyObserverFactory.create_observer(
+            ObserverStyle[observer_config["style"]],
+            Observer[observer_config["type"]],
+            observer_config["config"],
+            (feature_name, property_name))
+
+    def get_current_property_value(self, feature_name, property_name):
+        return self.features[feature_name]["properties"][property_name]["value"]
 
     def add_attribute(self, attribute_name):
         self.attributes.update({attribute_name: {}})
