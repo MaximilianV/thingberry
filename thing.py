@@ -117,6 +117,10 @@ class Thing:
             features.update({feature: {"properties": {}}})
             for f_property in self.features[feature]["properties"]:
                 features[feature]["properties"].update({f_property: {}})
+        if self.actions:
+            features.update({"actions": {"properties": {}}})
+        for action in self.actions:
+            features["actions"]["properties"].update({action: {}})
         return features
 
     def get_id(self):
