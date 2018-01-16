@@ -4,3 +4,7 @@ class Action:
 
     def trigger(self, **kwargs):
         pass
+
+    @staticmethod
+    def config():
+        pass

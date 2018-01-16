@@ -4,6 +4,7 @@ import utils
 from utils import ThingArtifact
 from propertyobserver.propertyobserverfactory import ObserverStyle
 from propertyobserver.propertyobserver import Observer
+from actions.actions import Action
 
 """
 This script handles the THING setup.
@@ -40,7 +41,10 @@ def setup_artifacts(thing, artifact, parent_artifact=None):
     print("In the following, you can configure the " + artifact.name + " of your thing.\n")
     if artifact == ThingArtifact.Feature:
         print("\"A Feature is used to manage all data and functionality of a Thing" +
-              "that can be clustered in an outlined technical context.\"\n")
+              " that can be clustered in an outlined technical context.\"\n")
+    if artifact == ThingArtifact.Action:
+        print("\"An Action is used to control any actuator or start a script based on your thing." +
+              " For example a photo can be taken each time the things camera action is updated.\"\n")
     add_artifact = True
     while add_artifact:
         setup_artifact(thing, artifact, parent_artifact)
@@ -67,6 +71,8 @@ def setup_artifact(thing, artifact, parent_artifact=None):
         setup_artifacts(thing, ThingArtifact.Property, name)
     if artifact == ThingArtifact.Property:
         setup_property_observer(thing, name, parent_artifact)
+    if artifact == ThingArtifact.Action:
+        setup_action(thing, name)
 
 
 def setup_property_observer(thing, property_name, feature_name):
@@ -80,16 +86,16 @@ def setup_property_observer(thing, property_name, feature_name):
     thing.set_property_observer(observer_style, observer, observer_config, property_name, feature_name)
 
 
+def setup_action(thing, action_name):
+    print("Please choose an action to be triggered:")
+    action = utils.ask_choose_from_enum(Action)
+    action_config = action.value.config()
+    action_config["type"] = action.name
+    thing.set_action(action_name, action_config)
+
+
 def request_should_import_existing_settings():
     return utils.ask_yes_no_question("Do you want to import it?")
-
-
-def request_should_save_settings():
-    return utils.ask_yes_no_question("Do you want to save your current settings?")
-
-
-def request_should_send_to_bosch():
-    return utils.ask_yes_no_question("Should the thing be send to the Bosch cloud?")
 
 
 def setup_new_thing(thing):
@@ -97,6 +103,8 @@ def setup_new_thing(thing):
     thing.name = request_thing_name()
     print("Your things id is \"" + thing.get_id() + "\".")
     setup_artifacts(thing, ThingArtifact.Feature)
+    if utils.ask_yes_no_question("Does your thing has any actions (actuators)?"):
+        setup_artifacts(thing, ThingArtifact.Action)
 
 
 def main():
@@ -116,11 +124,11 @@ def main():
     print(thing.features)
     print("You finished the setup.")
 
-    if request_should_save_settings():
+    if utils.ask_yes_no_question("Do you want to save your current settings?"):
         thing.write_settings()
         print("Wrote settings to disk.")
 
-    if request_should_send_to_bosch():
+    if utils.ask_yes_no_question("Should the thing be send to the Bosch cloud?"):
         thing.create()
         print("Sent thing to the clouds!")
 

@@ -31,3 +31,4 @@ class ThingArtifact(Enum):
     Attribute = 1
     Feature = 2
     Property = 3
+    Action = 4
