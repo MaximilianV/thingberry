@@ -76,6 +76,18 @@ def setup_artifact(thing, artifact, parent_artifact=None):
 
 
 def setup_property_observer(thing, property_name, feature_name):
+    """
+    Setup and configure a property observer (how a single property should be retrieved from the pi).
+    Afterwards, this configuration is added to the thing object.
+    :param thing: the affected thing
+    :type thing: Thing
+    :param property_name: the name for the new property
+    :type property_name: basestring
+    :param feature_name: the name of the feature this property belongs to
+    :type feature_name: basestring
+    :return: None
+    :rtype: None
+    """
     print("Please define how values for " + property_name + " should be obtained.")
     observer = utils.ask_choose_from_enum(Observer)
     print("Please select when values should be updated.")
@@ -87,6 +99,16 @@ def setup_property_observer(thing, property_name, feature_name):
 
 
 def setup_action(thing, action_name):
+    """
+    Let the user choose an action type and start the corresponding setup for this action.
+    Afterwards, this action is added to the current thing together with its configuration.
+    :param thing: the affected thing
+    :type thing: Thing
+    :param action_name: the name of the new action
+    :type action_name: basestring
+    :return: None
+    :rtype: None
+    """
     print("Please choose an action to be triggered:")
     action = utils.ask_choose_from_enum(Action)
     action_config = action.value.config()
@@ -94,11 +116,14 @@ def setup_action(thing, action_name):
     thing.set_action(action_name, action_config)
 
 
-def request_should_import_existing_settings():
-    return utils.ask_yes_no_question("Do you want to import it?")
-
-
 def setup_new_thing(thing):
+    """
+    Starts the setup procedure for a new thing.
+    :param thing: the thing object to be setup
+    :type thing: Thing
+    :return: None
+    :rtype: None
+    """
     print("The following steps will guide you through the setup of your new raspberry thing.")
     thing.name = request_thing_name()
     print("Your things id is \"" + thing.get_id() + "\".")
@@ -108,11 +133,16 @@ def setup_new_thing(thing):
 
 
 def main():
+    """
+    This methods leads through the whole setup process for a thing.
+    :return: None
+    :rtype: None
+    """
     thing = Thing()
     print("Welcome to thingberry.")
     if thing.do_settings_exist():
         print("An existing settings file was found.")
-        if request_should_import_existing_settings():
+        if utils.ask_yes_no_question("Do you want to import it?"):
             thing.load_settings()
             print("Successfully loaded settings for thing " + thing.name)
         else:
