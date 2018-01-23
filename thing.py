@@ -1,5 +1,6 @@
 import re
 import json
+import settings
 from pathlib import Path
 from thingconnector.thingconnector import ThingConnector
 from utils import ThingArtifact
@@ -16,7 +17,7 @@ class Thing:
 
     def __init__(self):
         self.settings = dict()
-        self.settings["namespace"] = "thingberry"
+        self.settings["namespace"] = settings.namespace
         self.settings["features"] = {}
         self.settings["attributes"] = {}
         self.settings["actions"] = {}
