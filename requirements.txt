@@ -1,3 +1,5 @@
 requests
 RPi.GPIO
 picamera
+websockets
+
