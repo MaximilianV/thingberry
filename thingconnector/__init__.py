@@ -1,2 +1,2 @@
 from thingconnector.thingconnector import ThingConnector
-import settings
+import thingconnector.settings

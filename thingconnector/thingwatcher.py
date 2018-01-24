@@ -1,4 +1,4 @@
-import settings
+import thingconnector.settings as settings
 import asyncio
 import websockets
 import logging
