@@ -1,0 +1,3 @@
+from thingconnector.thingconnector import ThingConnector
+from thingconnector.thingcommunicator import ThingCommunicator
+import thingconnector.settings

@@ -1,8 +1,7 @@
 import re
 import json
-import settings
 from pathlib import Path
-from thingconnector.thingconnector import ThingConnector
+from thingconnector import ThingConnector, settings
 from utils import ThingArtifact
 from propertyobserver.propertyobserver import Observer
 from propertyobserver.propertyobserverfactory import ObserverStyle
