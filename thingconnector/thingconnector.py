@@ -1,4 +1,4 @@
-import thingconnector.settings as settings
+import settings
 import requests
 
 BASE_URL = "https://things.apps.bosch-iot-cloud.com/api/2"
