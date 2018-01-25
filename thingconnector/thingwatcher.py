@@ -9,6 +9,12 @@ class ThingWatcher:
     def __init__(self, thing):
         self.thing = thing
         self.logger = logging.getLogger(__name__)
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format="%(asctime)s [%(levelname)-5.5s]  %(message)s",
+            handlers=[
+                logging.StreamHandler()])
+
 
     def start_watching(self):
         asyncio.get_event_loop().run_until_complete(self.watch())
@@ -58,7 +64,8 @@ class ThingWatcher:
         if len(path_parts) < 4:
             self.logger.debug("Discarding unimportant update on " + path)
             return
-        if path_parts[0] == "feature" and path_parts[1] == "actions":
+        self.logger.debug(path_parts)
+        if path_parts[1] == "features" and path_parts[2] == "actions":
             # a change on an action occured
             if value.lower() != "false":
-                self.thing.trigger_action(path_parts[3], value)
+                self.thing.trigger_action(path_parts[4], value)

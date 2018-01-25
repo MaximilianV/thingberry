@@ -133,8 +133,8 @@ class Thing:
         return self.namespace + ":" + self.name
 
     def trigger_action(self, action_name, value):
-        action = Action["action_name"].value()
         config = self.actions[action_name]["config"]
+        action = Action[config["type"]].value()
         if value != "true" and value != "false":
             config["value"] = value
         action.trigger(**config)

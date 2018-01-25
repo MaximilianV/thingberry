@@ -1,14 +1,18 @@
 from actions.action import Action
 from picamera import PiCamera
 from time import sleep
+import random
+import string
 
 
 class PhotoAction(Action):
-    def trigger(self, delay=2, destination=None):
+    def trigger(self, delay=2, destination=None, **kwargs):
         print("Taking a photo in " + str(delay) + " seconds.")
+        filename = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
+        filename += '.jpg'
         camera = PiCamera()
         sleep(delay)
-        camera.capture(destination)
+        camera.capture(destination + filename)
 
     @staticmethod
     def config():
