@@ -8,10 +8,8 @@ class Run:
         self.run_time = run_time
         self.thing = Thing()
         self.thing.load_settings()
-        self.thingwatcher = ThingWatcher(self.thing)
         print("Loaded settings for " + self.thing.name)
         self.init_observer()
-        self.thingwatcher.start_watching()
 
     def init_observer(self):
         thing_features = self.thing.features
