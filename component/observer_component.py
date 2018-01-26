@@ -9,6 +9,9 @@ class ObserverComponent(Component):
         self.property_name = property_name
         self.property_config = property_config
 
+    def update_property(self, new_value):
+        self.connector.update_property(self.thing_id, self.feature_name, self.property_name, new_value)
+
     def start_observe(self, **kwargs):
         thread = Thread(target=self.observe, kwargs=kwargs)
         thread.daemon = True
