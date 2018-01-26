@@ -7,3 +7,4 @@ class Component(Enum):
     Button = ButtonComponent
     NFC = NfcComponent
     Vibration = VibrationComponent
+    Display = DisplayComponent
