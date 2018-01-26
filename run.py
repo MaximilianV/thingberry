@@ -1,5 +1,6 @@
 from threading import Timer
 from thing import Thing
+from thingconnector.thingwatcher import ThingWatcher
 
 
 class Run:

@@ -1,7 +1,8 @@
 import re
 import json
 from pathlib import Path
-from thingconnector.thingconnector import ThingConnector
+from thingconnector import ThingConnector, settings
+from actions.actions import Action
 from utils import ThingArtifact
 from propertyobserver.propertyobserver import Observer
 from propertyobserver.propertyobserverfactory import ObserverStyle
@@ -16,9 +17,10 @@ class Thing:
 
     def __init__(self):
         self.settings = dict()
-        self.settings["namespace"] = "thingberry"
+        self.settings["namespace"] = settings.namespace
         self.settings["features"] = {}
         self.settings["attributes"] = {}
+        self.settings["actions"] = {}
         self.thingconnector = ThingConnector()
         print("A new thing!")
 
@@ -41,6 +43,10 @@ class Thing:
         return self.settings["features"]
 
     @property
+    def actions(self):
+        return self.settings["actions"]
+
+    @property
     def properties(self):
         properties = {}
         for feature in self.features:
@@ -58,12 +64,20 @@ class Thing:
             self.add_property(artifact_name, parent_artifact_name)
         if artifact == ThingArtifact.Attribute:
             self.add_attribute(artifact_name)
+        if artifact == ThingArtifact.Action:
+            self.add_action(artifact_name)
 
     def add_feature(self, feature_name):
         self.features.update({feature_name: {'properties': {}}})
 
     def add_property(self, property_name, feature_name):
         self.features[feature_name]["properties"][property_name] = {"observer": {}, "value": "0"}
+
+    def add_action(self, action_name):
+        self.actions.update({action_name: {'config': {}, 'value': 0}})
+
+    def add_attribute(self, attribute_name):
+        self.attributes.update({attribute_name: {}})
 
     def update_property(self, feature_name, property_name, value):
         if not isinstance(value, bool):
@@ -92,11 +106,11 @@ class Thing:
             observer_config["config"],
             (feature_name, property_name))
 
+    def set_action(self, action_name, action_config):
+        self.actions[action_name]["config"] = action_config
+
     def get_current_property_value(self, feature_name, property_name):
         return self.features[feature_name]["properties"][property_name]["value"]
-
-    def add_attribute(self, attribute_name):
-        self.attributes.update({attribute_name: {}})
 
     def get_features_without_values(self):
         features = {}
@@ -104,6 +118,10 @@ class Thing:
             features.update({feature: {"properties": {}}})
             for f_property in self.features[feature]["properties"]:
                 features[feature]["properties"].update({f_property: {}})
+        if self.actions:
+            features.update({"actions": {"properties": {}}})
+        for action in self.actions:
+            features["actions"]["properties"].update({action: False})
         return features
 
     def get_id(self):
@@ -113,6 +131,13 @@ class Thing:
         :rtype: basestring
         """
         return self.namespace + ":" + self.name
+
+    def trigger_action(self, action_name, value):
+        config = self.actions[action_name]["config"]
+        action = Action[config["type"]].value()
+        if value != "true" and value != "false":
+            config["value"] = value
+        action.trigger(**config)
 
     def write_settings(self):
         """
