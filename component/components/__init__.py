@@ -1,4 +1,4 @@
-from component.components.components import Component
+from component.components.components import Components
 from component.components.camera_component import CameraComponent
 from component.components.button_component import ButtonComponent
 from component.components.nfc_component import NfcComponent

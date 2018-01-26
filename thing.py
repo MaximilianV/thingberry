@@ -2,11 +2,8 @@ import re
 import json
 from pathlib import Path
 from thingconnector import ThingConnector, settings
-from actions.actions import Action
+from component.components import Components
 from utils import ThingArtifact
-from propertyobserver.propertyobserver import Observer
-from propertyobserver.propertyobserverfactory import ObserverStyle
-from propertyobserver.propertyobserverfactory import PropertyObserverFactory
 
 
 class Thing:
