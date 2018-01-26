@@ -29,6 +29,15 @@ class ThingConnector:
         data = str(value)
         return ThingConnector.get_response_message(self.put(uri, data), "thing")
 
+    def reset_action(self, thing_id, action_name, is_boolean=True):
+        value = "false"
+        if not is_boolean:
+            value = ""
+        uri = THINGS_URI.format(thingId=thing_id) \
+              + FEATURES_URI.format(featureName="actions") \
+              + PROPERTIES_URI.format(propertyName=action_name)
+        return ThingConnector.get_response_message(self.put(uri, value), "thing")
+
     def put(self, uri, data):
         r = self.session.put(ThingConnector.build_url(uri), json=data)
         return r
