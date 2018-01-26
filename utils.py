@@ -17,14 +17,34 @@ def ask_choose_from_enum(enum):
         entries.append(entry.name)
         i += 1
         print(str(i) + "\t" + entry.name)
-    entry_nr = int(input("Please select an entry:"))
+    entry_nr = input_require_int(input("Please select an entry:"))
     return enum[entries[entry_nr-1]]
 
 
+def ask_choose_from_list_or_new(a_list):
+    print("1\tNew entry")
+    i = 1
+    for entry in a_list:
+        i += 1
+        print(str(i) + "\t" + entry)
+    return input_require_int(input("Please select an entry:")) - 1
+
+
 def input_require_match_reqex(regex, raw_input):
-    while not re.match(regex, raw_input):
+    while not re.match("^[_a-zA-Z][_a-zA-Z0-9\-]*$", raw_input):
         raw_input = input("Please input a valid string as name (should match \"" + regex + "\"):\n")
     return raw_input
+
+
+def input_require_int(raw_input):
+    while True:
+        try:
+            if int(raw_input) > 0:
+                return int(raw_input)
+            else:
+                raise ValueError
+        except ValueError:
+            raw_input = input("Please input a valid number\n")
 
 
 class ThingArtifact(Enum):
