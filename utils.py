@@ -21,13 +21,16 @@ def ask_choose_from_enum(enum):
     return enum[entries[entry_nr-1]]
 
 
-def ask_choose_from_list_or_new(a_list):
+def ask_choose_index_from_list_or_new(a_list):
     print("1\tNew entry")
     i = 1
     for entry in a_list:
         i += 1
         print(str(i) + "\t" + entry)
-    return input_require_int(input("Please select an entry:")) - 1
+    index = input_require_int(input("Please select an entry:")) - 1
+    if index == 0:
+        return None
+    return index - 1
 
 
 def input_require_match_reqex(regex, raw_input):
