@@ -4,7 +4,6 @@ from picamera import PiCamera
 from time import sleep
 import random
 import string
-from datetime import datetime
 import socket
 
 
@@ -31,7 +30,7 @@ class CameraComponent(ActionComponent):
                                                                                         socket.SOCK_DGRAM)]][0][1]]) if l][0][0])
         camera_feature_content = dict()
         camera_feature_content["properties"] = dict()
-        camera_feature_content["properties"]["lastTriggered"] = str(datetime.now())
+        camera_feature_content["properties"]["lastTriggered"] = self.get_timestamp()
         camera_feature_content["properties"]["lastPictureUrl"] = "http://" + ip_address + "/images/" + filename
         logging.info(self.connector.update_feature(self.thing_id, "camera", camera_feature_content))
 

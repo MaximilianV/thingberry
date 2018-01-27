@@ -13,13 +13,11 @@ class VibrationComponent(ObserverComponent):
         logging.info("Add vibration detection on channel " + str(channel))
         super().start_observe(channel=channel)
 
-    def observe(self, channel, initial_count=0):
-        count = initial_count
+    def observe(self, channel):
         while True:
             if GPIO.event_detected(channel):
                 logging.info("Detected vibration" )
-                count += 1
-                self.update_property(count)
+                self.update_property(self.get_timestamp())
             time.sleep(0.25)
 
     @staticmethod
