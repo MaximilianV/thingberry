@@ -29,6 +29,12 @@ class ThingConnector:
         data = str(value)
         return ThingConnector.get_response_message(self.put(uri, data), "thing")
 
+    def update_feature(self, thing_id, feature_name, value):
+        uri = THINGS_URI.format(thingId=thing_id) \
+              + FEATURES_URI.format(featureName=feature_name)
+        data = value
+        return ThingConnector.get_response_message(self.put(uri, data), "thing")
+
     def reset_action(self, thing_id, action_name, is_boolean=True):
         value = "false"
         if not is_boolean:
