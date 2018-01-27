@@ -80,6 +80,8 @@ def setup_component():
         action_config["type"] = component.name
         thing.set_action_config(action_name, action_config)
 
+    print("Completed setup for " + component.name + " component.\n")
+
 
 def setup_new_thing():
     """
@@ -95,7 +97,7 @@ def setup_new_thing():
     should_add_component = True
     while should_add_component:
         setup_component()
-        should_add_component = utils.ask_yes_no_question("Add another component?")
+        should_add_component = utils.ask_yes_no_question("\nAdd another component?")
 
 
 def main():

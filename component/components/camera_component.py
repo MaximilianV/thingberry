@@ -24,7 +24,7 @@ class CameraComponent(ActionComponent):
     def configure_action():
         print("Configuring Camera Action:")
         delay = int(input("Delay until photo is taken (def. 2): "))
-        destination = input("\nDestination to save image: ")
+        destination = input("Destination to save image: ")
         return {
             "delay": delay,
             "destination": destination
