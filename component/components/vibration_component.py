@@ -9,7 +9,7 @@ class VibrationComponent(ObserverComponent):
         channel = int(self.property_config["pin"])
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(channel, GPIO.IN)
-        GPIO.add_event_detect(int(self.property_config["pin"]), GPIO.RISING, bouncetime=300)
+        GPIO.add_event_detect(int(self.property_config["pin"]), GPIO.RISING, bouncetime=1000)
         logging.info("Add vibration detection on channel " + str(channel))
         super().start_observe(channel=channel)
 
