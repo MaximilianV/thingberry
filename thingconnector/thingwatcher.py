@@ -8,13 +8,6 @@ import json
 class ThingWatcher:
     def __init__(self, runner):
         self.runner = runner
-        self.logger = logging.getLogger(__name__)
-        logging.basicConfig(
-            level=logging.DEBUG,
-            format="%(asctime)s [%(levelname)-5.5s]  %(message)s",
-            handlers=[
-                logging.StreamHandler()])
-
 
     def start_watching(self):
         asyncio.get_event_loop().run_until_complete(self.watch())
@@ -25,7 +18,7 @@ class ThingWatcher:
                                                      ('x-cr-api-token', settings.api_token),
                                                      ('content-type', 'application/vnd.eclipse.ditto+json')]) as websocket:
             await websocket.send("START-SEND-EVENTS")
-            self.logger.info("Requested to start sending events.")
+            logging.info("Requested to start sending events.")
             while True:
                 try:
                     message = await asyncio.wait_for(websocket.recv(), timeout=20)
@@ -46,10 +39,10 @@ class ThingWatcher:
         :return: (path, value) or None
         """
         if message == "START-SEND-EVENTS:ACK":
-            self.logger.info("INFO: Established connection.")
+            logging.info("INFO: Established connection.")
             return
         try:
             event_data = json.loads(message)
             self.runner.handle_change(event_data)
         except json.JSONDecodeError as e:
-            self.logger.warning("ERROR: {}".format(e.msg))
+            logging.warning("ERROR: {}".format(e.msg))

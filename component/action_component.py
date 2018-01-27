@@ -1,5 +1,6 @@
 from .component import Component
 from threading import Thread
+import logging
 
 
 class ActionComponent(Component):
@@ -9,13 +10,13 @@ class ActionComponent(Component):
         self.action_config = action_config
 
     def start_action(self, **kwargs):
+        logging.info("Start action for " + self.action_name)
         thread = Thread(target=self.trigger_action, kwargs=kwargs)
         thread.daemon = True
         thread.start()
 
     def trigger_action(self, **kwargs):
         raise NotImplementedError
-
 
     @staticmethod
     def configure_action():

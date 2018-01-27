@@ -12,13 +12,14 @@ class CameraComponent(ActionComponent):
         if delay == 0:
             delay = 1
         destination = self.action_config["destination"]
-        logging.debug("Taking a photo in " + str(delay) + " seconds.")
+        logging.info("Taking a photo in " + str(delay) + " seconds.")
         filename = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
         filename += '.jpg'
         camera = PiCamera()
         sleep(delay)
         camera.capture(destination + filename)
-        logging.debug("Photo taken and stored in " + str(destination) + ".")
+        logging.info("Photo taken and stored in " + str(destination) + ".")
+        self.connector.reset_action(self.thing_id, self.action_name)
 
     @staticmethod
     def configure_action():

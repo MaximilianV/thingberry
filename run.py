@@ -14,6 +14,13 @@ class Run:
         self.observer = self.thing.get_observers()
         self.actions = self.thing.get_actions()
         print("Loaded " + str(len(self.observer)) + " observer and " + str(len(self.actions)) + " action(s).")
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s [%(relativeCreated)6d %(threadName)s] [%(levelname)-5.5s]  %(message)s",
+            handlers=[
+                logging.FileHandler("{0}/{1}.log".format("logs", "execution")),
+                logging.StreamHandler()
+            ])
 
     def run(self):
         print("Starting observers.")
@@ -33,7 +40,7 @@ class Run:
     def handle_change(self, event_data):
         topic_elements = event_data["topic"].split("/")
         if topic_elements[0] != self.thing.namespace or topic_elements[1] != self.thing.name:
-            logging.debug("Message not relevant for this thing.")
+            logging.info("Message not relevant for this thing.")
             return
 
         path = event_data["path"]
@@ -41,16 +48,15 @@ class Run:
         logging.info("Thing updated: changed {} to {}".format(path, value))
         path_parts = path.split("/")
         if len(path_parts) < 4:
-            logging.debug("Discarding unimportant update on " + path)
+            logging.info("Discarding unimportant update on " + path)
             return
-        logging.debug(path_parts)
         if path_parts[1] == "features" and path_parts[2] == "actions":
             # a change on an action occured
             if value.lower() != "false":
                 self.run_action(path_parts[4], value)
 
     def run_action(self, action_name, value):
-        self.actions[action_name].start_action(value)
+        self.actions[action_name].start_action(value=value)
 
     def save_thing(self):
         self.thing.write_settings()
