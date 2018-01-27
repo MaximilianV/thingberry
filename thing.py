@@ -140,9 +140,8 @@ class Thing:
 
     def get_action_object(self, action_name):
         action_config = self.get_action_config(action_name)
-        action_object = Components[action_config["type"]].value(thing_id=self.id,
-                                                                action_name=action_name,
-                                                                action_config=action_config)
+        action_object = Components[action_config["type"]].value(thing_id=self.id)
+        action_object.init_action(action_name=action_name, action_config=action_config)
         return action_object
 
     def get_observers(self):
@@ -154,18 +153,9 @@ class Thing:
 
     def get_observer_object(self, feature_name, property_name):
         observer_config = self.get_property_config(feature_name, property_name)
-        observer_object = Components[observer_config["type"]].value(thing_id=self.id,
-                                                                    feature_name=feature_name,
-                                                                    property_name=property_name,
-                                                                    property_config=observer_config)
+        observer_object = Components[observer_config["type"]].value(thing_id=self.id)
+        observer_object.init_observer(feature_name=feature_name, property_name=property_name, property_config=observer_config)
         return observer_object
-
-    """def trigger_action(self, action_name, value):
-        config = self.actions[action_name]["config"]
-        action = Action[config["type"]].value()
-        if value != "true" and value != "false":
-            config["value"] = value
-        action.trigger(**config)"""
 
     def write_settings(self):
         """

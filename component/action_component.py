@@ -4,8 +4,12 @@ import logging
 
 
 class ActionComponent(Component):
-    def __init__(self, action_name, action_config, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.action_name = None
+        self.action_config = None
+
+    def init_action(self, action_name, action_config):
         self.action_name = action_name
         self.action_config = action_config
 

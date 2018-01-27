@@ -4,8 +4,13 @@ import logging
 
 
 class ObserverComponent(Component):
-    def __init__(self, feature_name, property_name, property_config, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.feature_name = None
+        self.property_name = None
+        self.property_config = None
+
+    def init_observer(self, feature_name, property_name, property_config):
         self.feature_name = feature_name
         self.property_name = property_name
         self.property_config = property_config
