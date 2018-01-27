@@ -41,12 +41,12 @@ def setup_artifact(artifact, parent_artifact=None):
 
 
 def choose_feature():
-    features = thing.features
-    feature_id = utils.ask_choose_from_list_or_new(features)
-    if feature_id == 0:
-        # setup new feature
+    features = thing.get_list_of_features()
+    print("Please select a feature to insert the component:")
+    feature_id = utils.ask_choose_index_from_list_or_new(features)
+    if feature_id is None:
         return setup_artifact(ThingArtifact.Feature)
-    return features[feature_id - 1]
+    return features[feature_id]
 
 
 def choose_property(feature_name):
@@ -56,17 +56,29 @@ def choose_property(feature_name):
 def setup_component():
     print("Please choose a component to be added to your thing:")
     component = utils.ask_choose_from_enum(Components)
+    # Try to execute config method for observer
     try:
-        property_config = component.value.configure_observer()
+        config_method = component.value.configure_observer
+    except AttributeError:
+        pass
+    else:
         feature_name = choose_feature()
         property_name = choose_property(feature_name)
-    except AttributeError:
-        print("No observer to configure.")
+        property_config = config_method()
+        property_config["type"] = component.name
+        thing.set_property_config(feature_name, property_name, property_config)
+
+
+    # Try to execute config method for action
     try:
-        action_config = component.value.configure_action()
-        action_name = setup_artifact(ThingArtifact.Action)
+        config_method = component.value.configure_action
     except AttributeError:
-        print("No action to configure.")
+        pass
+    else:
+        action_name = setup_artifact(ThingArtifact.Action)
+        action_config = config_method()
+        action_config["type"] = component.name
+        thing.set_action_config(action_name, action_config)
 
 
 def setup_new_thing():
@@ -79,7 +91,7 @@ def setup_new_thing():
     """
     print("The following steps will guide you through the setup of your new raspberry thing.")
     thing.name = request_thing_name()
-    print("Your things id is \"" + thing.get_id() + "\".")
+    print("Your things id is \"" + thing.id + "\".")
     should_add_component = True
     while should_add_component:
         setup_component()
