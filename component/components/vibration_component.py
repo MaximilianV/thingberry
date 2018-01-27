@@ -1,5 +1,31 @@
 from component import ObserverComponent
+import logging
+import RPi.GPIO as GPIO
+import time
 
 
 class VibrationComponent(ObserverComponent):
-    pass
+    def start_observe(self, **kwargs):
+        channel = int(self.property_config["pin"])
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(channel, GPIO.IN)
+        GPIO.add_event_detect(int(self.property_config["pin"]), GPIO.RISING, bouncetime=300)
+        logging.info("Add vibration detection on channel " + str(channel))
+        super().start_observe(channel=channel)
+
+    def observe(self, channel, initial_count=0):
+        count = initial_count
+        while True:
+            if GPIO.event_detected(channel):
+                logging.info("Detected vibration" )
+                count += 1
+                self.update_property(count)
+            time.sleep(0.25)
+
+    @staticmethod
+    def configure_observer():
+        print("Configuring Vibration Property:")
+        pin = int(input("Which pin is the vibration sensor connected to?"))
+        return {
+            "pin": pin,
+        }

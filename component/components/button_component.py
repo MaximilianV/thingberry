@@ -9,8 +9,8 @@ class ButtonComponent(ObserverComponent):
         channel = int(self.property_config["pin"])
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.add_event_detect(int(self.property_config["pin"]), GPIO.RISING)
-        logging.info("Add event detection on channel " + str(channel))
+        GPIO.add_event_detect(int(self.property_config["pin"]), GPIO.RISING, bouncetime=300)
+        logging.info("Add button press detection on channel " + str(channel))
         super().start_observe(channel=channel)
 
     def observe(self, channel, initial_count=0):
