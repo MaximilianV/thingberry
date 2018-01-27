@@ -16,8 +16,8 @@ class ThingConnector:
                                      'Content-Type': 'application/json'})
 
     def create_thing(self, thing):
-        uri = THINGS_URI.format(thingId=thing.get_id())
-        data = {'thingId': thing.get_id(),
+        uri = THINGS_URI.format(thingId=thing.id)
+        data = {'thingId': thing.id,
                 'attributes': thing.attributes,
                 'features': thing.get_features_without_values()}
         return ThingConnector.get_response_message(self.put(uri, data), "thing")
