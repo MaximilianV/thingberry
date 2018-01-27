@@ -132,6 +132,34 @@ class Thing:
             features["actions"]["properties"].update({action: False})
         return features
 
+    def get_actions(self):
+        actions = dict()
+        for action in self.actions:
+            actions[action] = self.get_action_object(action)
+        return actions
+
+    def get_action_object(self, action_name):
+        action_config = self.get_action_config(action_name)
+        action_object = Components[action_config["type"]].value(thing_id=self.id,
+                                                                action_name=action_name,
+                                                                action_config=action_config)
+        return action_object
+
+    def get_observers(self):
+        observers = dict()
+        for feature in self.features:
+            for f_property in self.features[feature]["properties"]:
+                observers[f_property] = self.get_observer_object(feature, f_property)
+        return observers
+
+    def get_observer_object(self, feature_name, property_name):
+        observer_config = self.get_property_config(feature_name, property_name)
+        observer_object = Components[observer_config["type"]].value(thing_id=self.id,
+                                                                    feature_name=feature_name,
+                                                                    property_name=property_name,
+                                                                    property_config=observer_config)
+        return observer_object
+
     """def trigger_action(self, action_name, value):
         config = self.actions[action_name]["config"]
         action = Action[config["type"]].value()

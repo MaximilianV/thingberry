@@ -6,8 +6,8 @@ import json
 
 
 class ThingWatcher:
-    def __init__(self, thing):
-        self.thing = thing
+    def __init__(self, runner):
+        self.runner = runner
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(
             level=logging.DEBUG,
@@ -50,22 +50,6 @@ class ThingWatcher:
             return
         try:
             event_data = json.loads(message)
-            topic_elements = event_data["topic"].split("/")
-            if topic_elements[0] != self.thing.namespace or topic_elements[1] != self.thing.name:
-                self.logger.debug("Message not relevant for this thing.")
-                return
-            self.logger.info("Thing updated: changed {} to {}".format(event_data["path"], event_data["value"]))
-            self.handle_change(event_data["path"], event_data["value"])
+            self.runner.handle_change(event_data)
         except json.JSONDecodeError as e:
             self.logger.warning("ERROR: {}".format(e.msg))
-
-    def handle_change(self, path, value):
-        path_parts = path.split("/")
-        if len(path_parts) < 4:
-            self.logger.debug("Discarding unimportant update on " + path)
-            return
-        self.logger.debug(path_parts)
-        if path_parts[1] == "features" and path_parts[2] == "actions":
-            # a change on an action occured
-            if value.lower() != "false":
-                self.thing.trigger_action(path_parts[4], value)
