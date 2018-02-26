@@ -23,7 +23,7 @@ class VibrationComponent(ObserverComponent):
     @staticmethod
     def configure_observer():
         print("Configuring Vibration Property:")
-        pin = int(input("Which pin is the vibration sensor connected to?"))
+        pin = int(input("Which pin is the vibration sensor connected to? "))
         return {
             "pin": pin,
         }

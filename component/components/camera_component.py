@@ -39,7 +39,7 @@ class CameraComponent(ActionComponent):
         print("Configuring Camera Action:")
         delay = int(input("Delay until photo is taken (def. 2): "))
         destination = input("Destination to save image: ")
-        ip_address = input("What's the current IP address?")
+        ip_address = input("What's the current IP address? ")
         return {
             "delay": delay,
             "destination": destination

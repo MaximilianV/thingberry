@@ -23,7 +23,7 @@ class ButtonComponent(ObserverComponent):
     @staticmethod
     def configure_observer():
         print("Configuring Button Property:")
-        pin = int(input("Which pin is the button connected to?"))
+        pin = int(input("Which pin is the button connected to? "))
         return {
             "pin": pin,
         }
