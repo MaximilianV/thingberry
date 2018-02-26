@@ -17,7 +17,7 @@ def request_thing_name():
     Asks the user for a thing name. The name has to consist of URI
     allowed characters only (http://www.ietf.org/rfc/rfc2396.txt).
     :return: uri conform string
-    :rtype: basestring
+    :rtype: str
     """
     raw_name = input("Please choose a name for your new thing:\n")
     return utils.input_require_match_reqex(THING_NAME_REGEX, raw_name)
@@ -25,14 +25,13 @@ def request_thing_name():
 
 def setup_artifact(artifact, parent_artifact=None):
     """
-    Requests a name for the new artifact to be created and in case it is a new feature, sub-properties will be
-    configurable too.
-    :param artifact: the artifact type that should be added
-    :type artifact: ThingArtifact
-    :param parent_artifact: default "none", name of parent feature if properties are created
-    :type parent_artifact: basestring
-    :return: None
-    :rtype: None
+    Lets the user setup (name) a new artifact (an artifact can be anything from the ThingArtifact-enum defined in utils).
+    :param artifact: kind of artifact to setup
+    :type artifact: a ThingArtifact-enum element
+    :param parent_artifact: name of the artifact of higher order
+    :type parent_artifact: str
+    :return: name of the configured artifact
+    :rtype: str
     """
     name = input("Please name the new " + artifact.name + ":\n")
     name = utils.input_require_match_reqex(FEATURE_PROPERTY_REGEX, name)
@@ -41,6 +40,12 @@ def setup_artifact(artifact, parent_artifact=None):
 
 
 def choose_feature():
+    """
+    Offers the user a list of feature-names so he can choose one.
+    The user can also add a new feature and select this feature, instead of an already existing one.
+    :return: name of the selected feature
+    :rtype: str
+    """
     features = thing.get_list_of_features()
     print("Please select a feature to insert the component:")
     feature_id = utils.ask_choose_index_from_list_or_new(features)
@@ -49,27 +54,29 @@ def choose_feature():
     return features[feature_id]
 
 
-def choose_property(feature_name):
-    return setup_artifact(ThingArtifact.Property, feature_name)
-
-
 def setup_component():
+    """
+    Shows a list of available components to the user and lets the user choose and configure one component.
+    :return: None
+    :rtype: None
+    """
     print("Please choose a component to be added to your thing:")
     component = utils.ask_choose_from_enum(Components)
-    # Try to execute config method for observer
+
+    # Each component can be an action, observer or even both.
+    # As we can not be sure which combination it is, we use the pythonic way of exceptions in the following.
+    # Try to execute config method for observer-component
     try:
         config_method = component.value.configure_observer
     except AttributeError:
         pass
     else:
         feature_name = choose_feature()
-        property_name = choose_property(feature_name)
+        property_name = setup_artifact(ThingArtifact.Property, feature_name)
         property_config = config_method()
         property_config["type"] = component.name
         thing.set_property_config(feature_name, property_name, property_config)
-
-
-    # Try to execute config method for action
+    # Try to execute config method for action-component
     try:
         config_method = component.value.configure_action
     except AttributeError:
@@ -86,8 +93,7 @@ def setup_component():
 def setup_new_thing():
     """
     Starts the setup procedure for a new thing.
-    :param thing: the thing object to be setup
-    :type thing: Thing
+    The Thing that is configured, is saved as a module global variable.
     :return: None
     :rtype: None
     """
@@ -103,6 +109,8 @@ def setup_new_thing():
 def main():
     """
     This methods leads through the whole setup process for a thing.
+    After setup, the user is asked whether the Thing should be instantiated in the cloud and whether
+    the configuration should be saved to disk (necessary for running the Thing).
     :return: None
     :rtype: None
     """
