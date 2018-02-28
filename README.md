@@ -36,5 +36,6 @@ Currently, the following components are implemented:
  - Binary (called vibration) (Observer)
 
 Depending on whether you want to implement an observer or an action (or even both), sub-class the `ActionComponent` or `ObserverComponent` class, provided in the `component` directory.
-Afer implementing, your new class has to be addded to the Components-Enumeration in `component/components/components.py`.
+After implementation, your new class has to be addded to the Components-Enumeration in `component/components/components.py`.
+Then, your new component will become available in the setup script automatically.
 In case you need inspiration, see the already implemented components.
