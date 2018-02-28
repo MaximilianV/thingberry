@@ -1,2 +1,3 @@
 from thingconnector.thingconnector import ThingConnector
+from thingconnector.thingwatcher import ThingWatcher
 import thingconnector.settings

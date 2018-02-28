@@ -16,8 +16,8 @@ class ThingConnector:
                                      'Content-Type': 'application/json'})
 
     def create_thing(self, thing):
-        uri = THINGS_URI.format(thingId=thing.get_id())
-        data = {'thingId': thing.get_id(),
+        uri = THINGS_URI.format(thingId=thing.id)
+        data = {'thingId': thing.id,
                 'attributes': thing.attributes,
                 'features': thing.get_features_without_values()}
         return ThingConnector.get_response_message(self.put(uri, data), "thing")
@@ -28,6 +28,21 @@ class ThingConnector:
               + PROPERTIES_URI.format(propertyName=property_name)
         data = str(value)
         return ThingConnector.get_response_message(self.put(uri, data), "thing")
+
+    def update_feature(self, thing_id, feature_name, value):
+        uri = THINGS_URI.format(thingId=thing_id) \
+              + FEATURES_URI.format(featureName=feature_name)
+        data = value
+        return ThingConnector.get_response_message(self.put(uri, data), "thing")
+
+    def reset_action(self, thing_id, action_name, is_boolean=True):
+        value = "false"
+        if not is_boolean:
+            value = ""
+        uri = THINGS_URI.format(thingId=thing_id) \
+              + FEATURES_URI.format(featureName="actions") \
+              + PROPERTIES_URI.format(propertyName=action_name)
+        return ThingConnector.get_response_message(self.put(uri, value), "thing")
 
     def put(self, uri, data):
         r = self.session.put(ThingConnector.build_url(uri), json=data)

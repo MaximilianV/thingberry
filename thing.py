@@ -2,11 +2,8 @@ import re
 import json
 from pathlib import Path
 from thingconnector import ThingConnector, settings
-from actions.actions import Action
+from component.components import Components
 from utils import ThingArtifact
-from propertyobserver.propertyobserver import Observer
-from propertyobserver.propertyobserverfactory import ObserverStyle
-from propertyobserver.propertyobserverfactory import PropertyObserverFactory
 
 
 class Thing:
@@ -57,11 +54,20 @@ class Thing:
     def attributes(self):
         return self.settings["attributes"]
 
+    @property
+    def id(self):
+        """
+        Build the thing id out of the set namespace and chosen name.
+        :return: a string containing the thing id
+        :rtype: basestring
+        """
+        return self.namespace + ":" + self.name
+
     def add_artifact(self, artifact, artifact_name, parent_artifact_name=None):
         if artifact == ThingArtifact.Feature:
             self.add_feature(artifact_name)
         if artifact == ThingArtifact.Property:
-            self.add_property(artifact_name, parent_artifact_name)
+            self.add_property(parent_artifact_name, artifact_name)
         if artifact == ThingArtifact.Attribute:
             self.add_attribute(artifact_name)
         if artifact == ThingArtifact.Action:
@@ -70,11 +76,23 @@ class Thing:
     def add_feature(self, feature_name):
         self.features.update({feature_name: {'properties': {}}})
 
-    def add_property(self, property_name, feature_name):
-        self.features[feature_name]["properties"][property_name] = {"observer": {}, "value": "0"}
+    def add_property(self, feature_name, property_name):
+        self.features[feature_name]["properties"][property_name] = {"config": {}}
+
+    def set_property_config(self, feature_name, property_name, property_config):
+        self.features[feature_name]["properties"][property_name]["config"] = property_config
+
+    def get_property_config(self, feature_name, property_name):
+        return self.features[feature_name]["properties"][property_name]["config"]
 
     def add_action(self, action_name):
-        self.actions.update({action_name: {'config': {}, 'value': 0}})
+        self.actions.update({action_name: {'config': {}}})
+
+    def set_action_config(self, action_name, action_config):
+        self.actions[action_name]["config"] = action_config
+
+    def get_action_config(self, action_name):
+        return self.actions[action_name]["config"]
 
     def add_attribute(self, attribute_name):
         self.attributes.update({attribute_name: {}})
@@ -85,29 +103,19 @@ class Thing:
                 return
             print("THING: Update value for \"" + feature_name + "/" + property_name + "\" to " + str(value) + ".")
             self.features[feature_name]["properties"][property_name]["value"] = str(value)
-            self.thingconnector.update_property(self.get_id(), feature_name, property_name, value)
+            self.thingconnector.update_property(self.id, feature_name, property_name, value)
         else:
             if value:
                 current_count = int(self.features[feature_name]["properties"][property_name]["value"]) + 1
                 print("THING: Update value for \"" + feature_name + "/" + property_name + "\" to " + str(current_count) + ".")
                 self.features[feature_name]["properties"][property_name]["value"] = str(current_count)
-                self.thingconnector.update_property(self.get_id(), feature_name, property_name, str(current_count))
+                self.thingconnector.update_property(self.id, feature_name, property_name, str(current_count))
 
-    def set_property_observer(self, observer_style, observer, observer_config, property_name, feature_name):
-        self.features[feature_name]["properties"][property_name]["observer"] = {"style": observer_style.name,
-                                                                                "type": observer.name,
-                                                                                "config": observer_config}
-
-    def get_property_observer(self, property_name, feature_name):
-        observer_config = self.features[feature_name]["properties"][property_name]["observer"]
-        return PropertyObserverFactory.create_observer(
-            ObserverStyle[observer_config["style"]],
-            Observer[observer_config["type"]],
-            observer_config["config"],
-            (feature_name, property_name))
-
-    def set_action(self, action_name, action_config):
-        self.actions[action_name]["config"] = action_config
+    def get_list_of_features(self):
+        feature_list = []
+        for feature in self.features:
+            feature_list.append(feature)
+        return feature_list
 
     def get_current_property_value(self, feature_name, property_name):
         return self.features[feature_name]["properties"][property_name]["value"]
@@ -124,20 +132,30 @@ class Thing:
             features["actions"]["properties"].update({action: False})
         return features
 
-    def get_id(self):
-        """
-        Build the thing id out of the set namespace and chosen name.
-        :return: a string containing the thing id
-        :rtype: basestring
-        """
-        return self.namespace + ":" + self.name
+    def get_actions(self):
+        actions = dict()
+        for action in self.actions:
+            actions[action] = self.get_action_object(action)
+        return actions
 
-    def trigger_action(self, action_name, value):
-        config = self.actions[action_name]["config"]
-        action = Action[config["type"]].value()
-        if value != "true" and value != "false":
-            config["value"] = value
-        action.trigger(**config)
+    def get_action_object(self, action_name):
+        action_config = self.get_action_config(action_name)
+        action_object = Components[action_config["type"]].value(thing_id=self.id)
+        action_object.init_action(action_name=action_name, action_config=action_config)
+        return action_object
+
+    def get_observers(self):
+        observers = dict()
+        for feature in self.features:
+            for f_property in self.features[feature]["properties"]:
+                observers[f_property] = self.get_observer_object(feature, f_property)
+        return observers
+
+    def get_observer_object(self, feature_name, property_name):
+        observer_config = self.get_property_config(feature_name, property_name)
+        observer_object = Components[observer_config["type"]].value(thing_id=self.id)
+        observer_object.init_observer(feature_name=feature_name, property_name=property_name, property_config=observer_config)
+        return observer_object
 
     def write_settings(self):
         """
