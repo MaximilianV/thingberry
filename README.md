@@ -6,7 +6,12 @@ This tool provides an easy way to connect your Raspberry Pi to the Bosch IoT Thi
 2. The `requirements.txt` lists all prerequists needed in order to run this application.
    Execute `sudo pip install -r requirements.txt` to install all dependecies automatically.
    It is recommended to do so as root user, as the [RPi.GPIO module states](https://sourceforge.net/p/raspberry-gpio-python/wiki/install/).
-3. Build your needed setup, e.g. connect a Pi-Camera, buttons, ...
+3. As some components need additional software and setup in order to work, the following steps have to be taken:
+   1. In the `component/components` directory, create a `lib` directory.
+   1. To setup the display component, follow [this tutorial (german)](https://tutorials-raspberrypi.de/hd44780-lcd-display-per-i2c-mit-dem-raspberry-pi-ansteuern/) and copy `i2c_lib.py` and `lcddriver.py` (from the [folder provided](http://tutorials-raspberrypi.de/wp-content/uploads/scripts/hd44780_i2c.zip) in the tutorial) to the `lib` folder.
+   1. For the NFC-component, the `MFRC522.py` file from [this repository](https://github.com/mxgxw/MFRC522-python) is needed in the `lib` folder.
+   Please note, that this script has another dependency mentioned in the repository's readme.
+4. Build your needed setup, e.g. connect a Pi-Camera, buttons, ...
 
 ## Usage
 ### Configuration
@@ -21,3 +26,15 @@ Execute `python run.py` as root (again, due to RPi.GPIO).
 Your configuration file will be analyzed, and the observer will be started accordingly.
 In addition, a WebSocket connection to the Bosch IoT Things service will be established.
 If a sensor registers a new value, you should now see a log entry in your terminal, as well as a change in the Bosch Thing.
+
+## Add new components
+Currently, the following components are implemented:
+ - Button (Observer)
+ - Pi-Camera (Action)
+ - Display (segmented) (Action)
+ - NFC (Action + Observer)
+ - Binary (called vibration) (Observer)
+
+Depending on whether you want to implement an observer or an action (or even both), sub-class the `ActionComponent` or `ObserverComponent` class, provided in the `component` directory.
+Afer implementing, your new class has to be addded to the Components-Enumeration in `component/components/components.py`.
+In case you need inspiration, see the already implemented components.
